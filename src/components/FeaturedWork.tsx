@@ -1,14 +1,11 @@
 import { motion } from 'framer-motion';
-import { ExternalLink, Coffee, Zap, Gauge, Smartphone, Globe, Cloud } from 'lucide-react';
+import { ExternalLink, Zap, Gauge, Smartphone, Cloud } from 'lucide-react';
 import { freelanceProjects } from '@/data/portfolio';
 import SectionHeading from './SectionHeading';
 
-
 const HIGHLIGHT_ICONS = [Zap, Smartphone, Gauge, Cloud];
 
-
 export default function FeaturedWork() {
-  
   return (
     <section id="work" className="relative py-24 sm:py-32" aria-label="Featured Work">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -47,29 +44,15 @@ export default function FeaturedWork() {
                         {project.displayUrl}
                       </div>
                     </div>
-                    {/* Mock content */}
-                    <div className="aspect-[4/3] bg-gradient-to-br from-ink-850 via-ink-900 to-ink-950 p-6">
-                      <div className="flex items-center gap-2 text-accent">
-                        {idx === 0 ? (
-                          <Coffee className="h-6 w-6" />
-                        ) : (
-                          <Globe className="h-6 w-6" />
-                        )}
-                        <span className="font-display font-bold text-white">{project.name}</span>
-                      </div>
-                      <div className="mt-4 space-y-2">
-                        <div className="h-3 w-3/4 rounded bg-ink-700" />
-                        <div className="h-3 w-1/2 rounded bg-ink-700" />
-                      </div>
-                      <div className="mt-4 grid grid-cols-3 gap-2">
-                        <div className="aspect-square rounded-lg bg-ink-700/60" />
-                        <div className="aspect-square rounded-lg bg-ink-700/60" />
-                        <div className="aspect-square rounded-lg bg-ink-700/60" />
-                      </div>
-                      <div className="mt-4 flex gap-2">
-                        <div className="h-8 w-24 rounded-full bg-accent/80" />
-                        <div className="h-8 w-20 rounded-full border border-ink-600" />
-                      </div>
+
+                    {/* Actual Website Preview Image */}
+                    <div className="relative aspect-[4/3] overflow-hidden bg-ink-950">
+                      <img
+                        src={project.image}
+                        alt={`${project.name} preview`}
+                        className="h-full w-full object-cover object-top transition-transform duration-500 hover:scale-105"
+                        loading="lazy"
+                      />
                     </div>
                   </div>
                 </div>
@@ -89,19 +72,18 @@ export default function FeaturedWork() {
                   </p>
 
                   {/* Highlights with icons */}
-                        <ul className="mt-6 space-y-3">
-        {project.highlights.map((highlight, i) => {
-          // Falls back to Zap if there are more highlights than icons defined
-          const IconComponent = HIGHLIGHT_ICONS[i] || Zap;
+                  <ul className="mt-6 space-y-3">
+                    {project.highlights.map((highlight, i) => {
+                      const IconComponent = HIGHLIGHT_ICONS[i] || Zap;
 
-          return (
-            <li key={i} className="flex gap-3 text-sm text-ink-100">
-              <IconComponent className="mt-0.5 h-5 w-5 flex-shrink-0 text-accent" />
-              <span>{highlight}</span>
-            </li>
-          );
-        })}
-      </ul>
+                      return (
+                        <li key={i} className="flex gap-3 text-sm text-ink-100">
+                          <IconComponent className="mt-0.5 h-5 w-5 flex-shrink-0 text-accent" />
+                          <span>{highlight}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
 
                   {/* Tech stack */}
                   <div className="mt-6 flex flex-wrap gap-2">

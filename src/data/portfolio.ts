@@ -73,11 +73,13 @@ export interface FreelanceProject {
   highlights: string[];
   link: string;
   displayUrl: string;
+  image: string;
 }
 
 export const freelanceProjects: FreelanceProject[] = [
   {
     name: 'Ministry of Coffee Affairs',
+    image:'/projects/coffee.png',
     tagline: 'B2B coffee company website',
     description:
       'Sole developer for end-to-end design and delivery of a B2B coffee company website — wireframe to production with a focus on brand storytelling and conversion.',
@@ -93,6 +95,7 @@ export const freelanceProjects: FreelanceProject[] = [
   },
   {
     name: 'Intiruchulu',
+    image:'/projects/intiruchulu.png',
     tagline: 'Home made food delivery platform',
     description:
       'Sole developer for end-to-end design and delivery of a home made food delivery platform — wireframe to production with a focus on brand storytelling and conversion.',
