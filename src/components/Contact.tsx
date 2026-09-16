@@ -5,17 +5,62 @@ import { personal } from '@/data/portfolio';
 import SectionHeading from './SectionHeading';
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
-  const [sent, setSent] = useState(false);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    const subject = encodeURIComponent(`Portfolio contact from ${form.name}`);
-    const body = encodeURIComponent(`${form.message}\n\n— ${form.name}\n${form.email}`);
-    window.location.href = `mailto:${personal.email}?subject=${subject}&body=${body}`;
-    setSent(true);
-    setTimeout(() => setSent(false), 4000);
-  };
+const [form, setForm] = useState({
+  name: '',
+  email: '',
+  message: '',
+});
+
+const [status, setStatus] = useState<
+  'idle' | 'sending' | 'success' | 'error'
+>('idle');
+
+const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+
+  setStatus('sending');
+
+  try {
+    const response = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+body: JSON.stringify({
+  access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
+  subject: `Portfolio Contact — ${form.name}`,
+  name: form.name,
+  email: form.email,
+  message: form.message,
+  botcheck: false,
+}),
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      setStatus('success');
+
+      setForm({
+        name: '',
+        email: '',
+        message: '',
+      });
+
+      setTimeout(() => {
+        setStatus('idle');
+      }, 4000);
+    } else {
+      console.error('Web3Forms error:', result);
+      setStatus('error');
+    }
+  } catch (error) {
+    console.error('Contact form submission failed:', error);
+    setStatus('error');
+  }
+};
 
   return (
     <section id="contact" className="relative py-24 sm:py-32" aria-label="Contact">
@@ -108,6 +153,13 @@ export default function Contact() {
               className="rounded-2xl glass p-8"
               aria-label="Contact form"
             >
+              <input
+  type="checkbox"
+  name="botcheck"
+  className="hidden"
+  tabIndex={-1}
+  autoComplete="off"
+/>
               <div className="space-y-5">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-ink-100">
@@ -151,22 +203,42 @@ export default function Contact() {
                     placeholder="What are you building?"
                   />
                 </div>
-                <button
-                  type="submit"
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-semibold text-ink-950 transition-colors hover:bg-accent-300"
-                >
-                  {sent ? (
-                    <>
-                      <CheckCircle className="h-4 w-4" />
-                      Opening your email client...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="h-4 w-4" />
-                      Send Message
-                    </>
-                  )}
+<button
+  type="submit"
+  disabled={status === 'sending'}
+  className="flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-semibold text-ink-950 transition-colors hover:bg-accent-300 disabled:cursor-not-allowed disabled:opacity-60"
+>
+  {status === 'sending' ? (
+    <>
+      <Send className="h-4 w-4 animate-pulse" />
+      Sending...
+    </>
+  ) : status === 'success' ? (
+    <>
+      <CheckCircle className="h-4 w-4" />
+      Message Sent!
+    </>
+  ) : status === 'error' ? (
+    <>
+      <Send className="h-4 w-4" />
+      Try Again
+    </>
+  ) : (
+    <>
+      <Send className="h-4 w-4" />
+      Send Message
+    </>
+  )}
                 </button>
+                {status === 'error' && (
+
+  <p className="mt-3 text-center text-sm text-red-400">
+
+    Something went wrong while sending your message. Please try again.
+
+  </p>
+
+)}
               </div>
             </form>
           </motion.div>
